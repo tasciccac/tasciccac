@@ -89,6 +89,7 @@ function hKumo=displayIchimokuCloud(priceHistory,varargin)
   else
     bSenkAGreatThanSenkB = %F;
   end
+
   startOfCloud=ICH_MidPeriod+ICH_MidPeriod*2+1;
   startOfCloud_ix=startOfCloud;
   startOfCloud_iy=ichimokuCloud(startOfCloud_ix,5);
@@ -145,6 +146,7 @@ function hKumo=displayIchimokuCloud(priceHistory,varargin)
       bSenkAGreatThanSenkB=%T;
     end
   end
+
   // Trace the last Cloud
   if (bSenkAGreatThanSenkB==%T) then
     xfpoly([startOfCloud_ix startOfCloud:n+ICH_MidPeriod n+ICH_MidPeriod:-1:startOfCloud startOfCloud_ix],[startOfCloud_iy cloudBorderA flipdim(cloudBorderB,2) startOfCloud_iy],-cloudColorWhenSAGSB);
@@ -182,25 +184,55 @@ function hIchimokuLines=displayIchimokuLines(priceHistory)
   ICH_shortPeriod=9;
   ICH_MidPeriod=26;
   ichimokuCloud=getIchimokuCloud(priceHistory,ICH_shortPeriod,ICH_MidPeriod);
+
+  nbUTTenkanExt = 5;
+
+  for i=1:nbUTTenkanExt
+    // Add Tenkan Extension
+    ichimokuCloud($-26+i,3) = (min(priceHistory($-ICH_shortPeriod+1+i:$,4))+max(priceHistory($-ICH_shortPeriod+1+i:$,3)))/2;
+  end
+
+  nbUTKijunExt = 14;
+  for i=1:nbUTKijunExt
+    // Add Kijun Extension
+    ichimokuCloud($-26+i,4) = (min(priceHistory($-ICH_MidPeriod+1+i:$,4))+max(priceHistory($-ICH_MidPeriod+1+i:$,3)))/2;
+  end
+
+  // Tenkan
+  plot2d(ichimokuCloud(1:$-26,1),ichimokuCloud(1:$-26,3),style=[color("scilabred3")]);
+  hTenkan=gce();
+  hTenkan.tag="Tenkan";
+  hTenkan.user_data=[ichimokuCloud($-26,3)];
+  hTenkan.children(1).thickness=2;
+  // Tenkan Extension
+  plot2d(ichimokuCloud($-26:$-26+nbUTTenkanExt,1),ichimokuCloud($-26:$-26+nbUTTenkanExt,3),style=[color("scilabred3")]);
+  hTenkanExt=gce();
+  hTenkanExt.tag="TenkanExt";
+  hTenkanExt.children(1).thickness=2;
+  hTenkanExt.children(1).line_style=5;
+
+  // Kijun
+  plot2d(ichimokuCloud(1:$-26,1),ichimokuCloud(1:$-26,4),style=[color("forestgreen")]);
+  hKijun=gce();
+  hKijun.tag="Kijun";
+  hKijun.user_data=[ichimokuCloud($-26,4)];
+  hKijun.children(1).thickness=3;
+  // Kijun Extension
+  plot2d(ichimokuCloud($-26:$-26+nbUTKijunExt,1),ichimokuCloud($-26:$-26+nbUTKijunExt,4),style=[color("forestgreen")]);
+  hKijunExt=gce();
+  hKijunExt.tag="KijunExt";
+  hKijunExt.children(1).thickness=3;
+  hKijunExt.children(1).line_style=5;
+
   //Chikou
   plot2d(ichimokuCloud(:,1),ichimokuCloud(:,2),style=[color("blue2")]);
   hChikou=gce();
   hChikou.tag="Chikou";
   hChikou.user_data=[ichimokuCloud($-52,2)];
   hChikou.children(1).thickness=2
-  // Tenkan
-  plot2d(ichimokuCloud(:,1),ichimokuCloud(:,3),style=[color("scilabred3")]);
-  hTenkan=gce();
-  hTenkan.tag="Tenkan";
-  hTenkan.user_data=[ichimokuCloud($-26,3)];
-  hTenkan.children(1).thickness=2
-  // Kijun
-  plot2d(ichimokuCloud(:,1),ichimokuCloud(:,4),style=[color("forestgreen")]);
-  hKijun=gce();
-  hKijun.tag="Kijun";
-  hKijun.user_data=[ichimokuCloud($-26,4)];
-  hKijun.children(1).thickness=3;
+
   hIchimokuLines=[hChikou hTenkan hKijun];
+  
 endfunction
 
 
