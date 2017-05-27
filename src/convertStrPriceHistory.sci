@@ -16,7 +16,7 @@
 
 function priceHistory=convertStrPriceHistory(strPriceHistory)
   [n m]=size(strPriceHistory);
-  priceHistory=zeros(n-1,7);
+  priceHistory=zeros(n-1,6);
   for i=n:-1:2
     vecDate = msscanf(strPriceHistory(i,1),"%d-%d-%d");
     numDate = datenum(vecDate);
@@ -25,7 +25,47 @@ function priceHistory=convertStrPriceHistory(strPriceHistory)
     Low = msscanf(strPriceHistory(i,4),"%f");
     Close = msscanf(strPriceHistory(i,5),"%f");
     Volume = msscanf(strPriceHistory(i,6),"%f");
-    AdjClose = msscanf(strPriceHistory(i,7),"%f");
-    priceHistory(n-i+1,:) = [numDate Open High Low Close Volume AdjClose];
+    priceHistory(n-i+1,:) = [numDate Open High Low Close Volume];
   end
 endfunction
+
+function priceHistory=convertStrPriceHistoryN(strPriceHistory)
+  // line to remove
+  k=find(strPriceHistory(:,5)=="null");
+  n=size(strPriceHistory,'r');
+  for i=1:size(k,'*')
+    strPriceHistory=strPriceHistory([1:(k(i)-1) (k(i)+1):n],:);
+    n=n-1;
+  end
+
+  n=size(strPriceHistory,'r');
+  priceHistory=zeros(n-1,6);
+ 
+  for i=2:n
+    vecDate = msscanf(strPriceHistory(i,1),"%d-%d-%d");
+    numDate = datenum(vecDate);
+    Open = msscanf(strPriceHistory(i,2),"%f");
+    High = msscanf(strPriceHistory(i,3),"%f");
+    Low = msscanf(strPriceHistory(i,4),"%f");
+    Close = msscanf(strPriceHistory(i,6),"%f");
+    Volume = msscanf(strPriceHistory(i,7),"%f");
+    priceHistory(i-1,:) = [numDate Open High Low Close Volume];    
+  end
+endfunction
+
+
+function strPriceHistory=convertPriceHistoryToStr(priceHistory)
+  [n m]=size(priceHistory);
+  strPriceHistory=["Date" "Open" "High" "Low" "Close" "Volume" "Adj Close"];
+  for i=n:-1:1
+    vecDate = datevec(priceHistory(i,1));
+    strDate = msprintf("%04d-%02d-%02d",vecDate(1),vecDate(2),vecDate(3));
+    strOpen = msprintf("%f",priceHistory(i,2));
+    strHigh = msprintf("%f",priceHistory(i,3));
+    strLow = msprintf("%f",priceHistory(i,4));
+    strClose = msprintf("%f",priceHistory(i,5));
+    strVolume = msprintf("%d",priceHistory(i,6));
+    strPriceHistory=[strPriceHistory; strDate strOpen strHigh strLow strClose strVolume strClose];
+  end
+endfunction
+    
