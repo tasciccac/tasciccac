@@ -101,7 +101,7 @@ function hKumo=drawIchimokuCloud(priceHistory,varargin)
 
   ichimokuCloud=getIchimokuCloud(priceHistory,ICH_shortPeriod,ICH_MidPeriod);
   
-  SSA_Greater_SSB_x=(ichimokuCloud(:,5) > ichimokuCloud(:,6));
+  SSA_Greater_SSB_x=(ichimokuCloud(:,5) >= ichimokuCloud(:,6));
   twist_x = find((SSA_Greater_SSB_x(2:$) <> SSA_Greater_SSB_x(1:$-1)) == %t);
 
   clouds=list();
@@ -186,13 +186,24 @@ function hKumo=drawIchimokuCloud(priceHistory,varargin)
     cloud.x = [cloud_startx cloud_x cloud_endx flipdim(cloud_x,2)];
     cloud.y = [cloud_starty cloud_ssa_y cloud_endy flipdim(cloud_ssb_y,2)];
 
-    if (ichimokuCloud(twist_x(i),5) > ichimokuCloud(twist_x(i),6)) then
+    // Find the offset where SSA <> SSB
+    offset=0;
+    while (ichimokuCloud(twist_x(i)+offset,5) == ichimokuCloud(twist_x(i)+offset,6)) then
+      offset = offset + 1;
+      if ((twist_x(i)+offset) > size(ichimokuCloud,'r')) then
+        offset = offset - 1;
+        break;
+      end
+    end
+
+    if (ichimokuCloud(twist_x(i)+offset,5) > ichimokuCloud(twist_x(i)+offset,6)) then
       xfpoly(cloud.x, cloud.y, -cloudColorWhenSAGSB);
       cloud.type = 'bullish';
     else
       xfpoly(cloud.x, cloud.y, -cloudColorWhenSALSB);
       cloud.type = 'bearish';
     end
+
     clouds(0) = cloud;
     cloud_handles=[cloud_handles gce()];
 
@@ -232,14 +243,26 @@ function hKumo=drawIchimokuCloud(priceHistory,varargin)
 
   cloud.x = [cloud_startx cloud_x flipdim(cloud_x,2)];
   cloud.y = [cloud_starty cloud_ssa_y flipdim(cloud_ssb_y,2)];
+
+  // Find the offset where SSA <> SSB
+  offset=0;
   
-  if (ichimokuCloud(twist_x($),5) > ichimokuCloud(twist_x($),6)) then
+  while (ichimokuCloud(twist_x($)+offset,5) == ichimokuCloud(twist_x($)+offset,6)) then
+    offset = offset + 1;
+    if ((twist_x($)+offset) > size(ichimokuCloud,'r')) then
+      offset = offset - 1;
+      break;
+    end
+  end
+  
+  if (ichimokuCloud(twist_x($)+offset,5) > ichimokuCloud(twist_x($)+offset,6)) then
     xfpoly(cloud.x, cloud.y, -cloudColorWhenSAGSB);
     cloud.type = 'bullish';
   else
     xfpoly(cloud.x, cloud.y, -cloudColorWhenSALSB);
     cloud.type = 'bearish';
   end
+
   cloud_handles=[cloud_handles gce()];
 
   // Group all cloud entity

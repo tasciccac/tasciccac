@@ -29,13 +29,15 @@ function priceHistory=convertStrPriceHistory(strPriceHistory)
   end
 endfunction
 
-function priceHistory=convertStrPriceHistoryN(strPriceHistory)
+function priceHistory=convertStrPriceHistoryN(strPriceHistory,varargin)
   // line to remove
-  k=find(strPriceHistory(:,5)=="null");
-  n=size(strPriceHistory,'r');
-  for i=1:size(k,'*')
-    strPriceHistory=strPriceHistory([1:(k(i)-1) (k(i)+1):n],:);
-    n=n-1;
+  k=find(strPriceHistory(:,5)<>"null");
+  strPriceHistory=strPriceHistory(k,:);
+
+  idxClose=6;
+  if (isempty(varargin) == %f) then
+    lparam=length(varargin);
+    idxClose = varargin(1);
   end
 
   n=size(strPriceHistory,'r');
@@ -47,8 +49,11 @@ function priceHistory=convertStrPriceHistoryN(strPriceHistory)
     Open = msscanf(strPriceHistory(i,2),"%f");
     High = msscanf(strPriceHistory(i,3),"%f");
     Low = msscanf(strPriceHistory(i,4),"%f");
-    Close = msscanf(strPriceHistory(i,6),"%f");
+    Close = msscanf(strPriceHistory(i,idxClose),"%f");
     Volume = msscanf(strPriceHistory(i,7),"%f");
+    if (isempty(Volume) == %t) then
+      Volume = 0;
+    end
     priceHistory(i-1,:) = [numDate Open High Low Close Volume];    
   end
 endfunction

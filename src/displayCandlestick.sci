@@ -28,11 +28,11 @@ function hCandlestick=displayCandlestick(priceHistory,varargin)
 
   hKumo=[];
   if (bWithIchimokuCloud == %T) then
-    hKumo=displayIchimokuCloud(priceHistory,%F);
+    hKumo=drawIchimokuCloud(priceHistory,%F);
   end
 
-  colorBearishCandle = color("firebrick1");
-  colorBullishCandle = color("green3");
+  colorBearishCandle = color("firebrick1"); // #FF3030
+  colorBullishCandle = color("green3"); // #00D000
 
   [n m]=size(priceHistory);
   //
@@ -81,6 +81,14 @@ function hCandlestick=displayCandlestick(priceHistory,varargin)
   end
   hCandlestick=glue(hCandles);
   hCandlestick.tag="Candlestick";
+  hCandlestick.user_data=priceHistory;
+
+  axes_candlestick=findobj("tag","axes_candlestick");
+  if (isempty(axes_candlestick) == %t) then
+    axes_candlestick=gca();
+    axes_candlestick.tag="axes_candlestick";
+    axes_candlestick.user_data=priceHistory;
+  end
 
   if (bWithIchimokuCloud == %t) then
     hKumo=[hKumo displayIchimokuLines(priceHistory)];
