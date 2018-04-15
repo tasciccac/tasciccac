@@ -27,17 +27,25 @@ getd("./src");
 strPriceHistory=csvRead("./examples/SP500_m.csv",",",".","string");
 priceHistory=convertStrPriceHistoryN(strPriceHistory);
 
-title("Technical Analysis with Scilab & Ichimoku - $SPX Monthly","fontname","helvetica","fontsize",6);
+title("Dynamical Technical Analysis with Scilab - $SPX Monthly","fontname","helvetica","fontsize",6);
 hCandlestick=displayCandlestick(priceHistory,%f);
 
 // Draw the moving average
 // Pivot is (h+l+c)/3
 pivot=getPivot(priceHistory);
-hMM20=displayMM(pivot(:,2),20,1);
-hMM7=displayMM(priceHistory(:,5),7,0);
+hSMA20=drawSMA(pivot(:,2),20,1);
+hSMA7=drawSMA(priceHistory(:,5),7,0);
+hJacks=drawJacks(priceHistory);
+hOggys=drawOggys(priceHistory);
+
+hSAR=drawSAR(priceHistory);
+
+if (isnan(hSAR(1).user_data(1)) == %f) then
+  hSAR = hSAR(1);
+end
 
 
-legend([hCandlestick(5) hCandlestick(6) hCandlestick(4) hCandlestick(2) hCandlestick(3)],[("Tenkan: "+msprintf("%d",round(hCandlestick(5).user_data))) ("Kijun: "+msprintf("%d",round(hCandlestick(6).user_data))) ("Chikou: "+msprintf("%d",round(hCandlestick(4).user_data))) ("SSA: "+msprintf("%d",round(hCandlestick(2).user_data))) ("SSB: "+msprintf("%d",round(hCandlestick(3).user_data)))],2);
+legend([hSMA7 hOggys hSMA20(1) hJacks hSMA20(2) hSAR],[("SMA7: "+msprintf("%d",round(hSMA7.user_data))) ("Oggys") ("SMA20: "+msprintf("%d",round(hSMA20.user_data))) ("Jacks") ("BBinf - BBsup : " +msprintf("%d - %d",round(hSMA20(2).user_data),round(hSMA20(3).user_data))) ("SAR: "+msprintf("%d",round(hSAR.user_data)))],2);
 hLegend=gce();
 hLegend.font_size=3;
 displayDateOfQuotation(priceHistory, 'm');
@@ -49,6 +57,6 @@ fig=gcf();
 fig.axes_size=[1639,922];
 
 // Save the imahe into a png file
-xs2png(fig, "SP500_m.png");
+xs2png(fig, "SP500_m_dta.png");
 
 

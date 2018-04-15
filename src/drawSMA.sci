@@ -24,7 +24,7 @@
 // varargin(4) => style
 // varargin(5) => factor of std deviation
 
-function hMA=drawSMA(priceHistory,width,varargin)
+function hSMA=drawSMA(priceHistory,width,varargin)
   bWithBollinger=%f;
   [nout nin]=argn();
 
@@ -64,12 +64,12 @@ function hMA=drawSMA(priceHistory,width,varargin)
   [n m]=size(priceHistorySMA);
   if (n >= 1) then
     plot2d(width+(0:n-1),priceHistorySMA);
-    hMA=gce();
-    hMA.tag=msprintf("MM%d",width);
-    hMA.user_data=priceHistorySMA($);
-    hMA.children(1).thickness=thickness;
-    hMA.children(1).line_style=line_style;
-    hMA.children(1).foreground=color(strColor);
+    hSMA=gce();
+    hSMA.tag=msprintf("MM%d",width);
+    hSMA.user_data=priceHistorySMA($);
+    hSMA.children(1).thickness=thickness;
+    hSMA.children(1).line_style=line_style;
+    hSMA.children(1).foreground=color(strColor);
     if (bWithBollinger == 1) then
       plot2d(width+(0:n-1), bsup);
       hBBsup=gce();
@@ -79,9 +79,9 @@ function hMA=drawSMA(priceHistory,width,varargin)
       hBBinf=gce();
       hBBinf.tag=msprintf("BBinf%d",width);
       hBBinf.user_data=binf($);
-      hMM=[hMM hBBsup hBBinf];
+      hSMA=[hSMA hBBsup hBBinf];
     end
   else
-    hMM=[];
+    hSMA=[];
   end
 endfunction
