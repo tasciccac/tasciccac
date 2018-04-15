@@ -15,7 +15,7 @@
 //
 
 
-// Draw a moving average
+// Draw a simple moving average
 // \param [in] priceHistory The price history
 // \param [in] width The witdth of the moving average
 // varargin(1) => bWithBollinger %t to display the Bollinger band
@@ -24,7 +24,7 @@
 // varargin(4) => style
 // varargin(5) => factor of std deviation
 
-function hMM=drawMA(priceHistory,width,varargin)
+function hMA=drawSMA(priceHistory,width,varargin)
   bWithBollinger=%f;
   [nout nin]=argn();
 
@@ -60,16 +60,16 @@ function hMM=drawMA(priceHistory,width,varargin)
     fstddev = varargin(5);
   end
 
-  [priceHistoryMM binf bsup]=MM(priceHistory,width);
-  [n m]=size(priceHistoryMM);
+  [priceHistorySMA binf bsup]=SMA(priceHistory,width);
+  [n m]=size(priceHistorySMA);
   if (n >= 1) then
-    plot2d(width+(0:n-1),priceHistoryMM);
-    hMM=gce();
-    hMM.tag=msprintf("MM%d",width);
-    hMM.user_data=priceHistoryMM($);
-    hMM.children(1).thickness=thickness;
-    hMM.children(1).line_style=line_style;
-    hMM.children(1).foreground=color(strColor);
+    plot2d(width+(0:n-1),priceHistorySMA);
+    hMA=gce();
+    hMA.tag=msprintf("MM%d",width);
+    hMA.user_data=priceHistorySMA($);
+    hMA.children(1).thickness=thickness;
+    hMA.children(1).line_style=line_style;
+    hMA.children(1).foreground=color(strColor);
     if (bWithBollinger == 1) then
       plot2d(width+(0:n-1), bsup);
       hBBsup=gce();
