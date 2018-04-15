@@ -57,6 +57,6 @@ fig=gcf();
 fig.axes_size=[1639,922];
 
 // Save the imahe into a png file
-xs2png(fig, "SP500_m_dta.png");
+xs2png(fig, "./examples/SP500_m_dta.png");
 
 
