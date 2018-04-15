@@ -90,10 +90,12 @@ function hCandlestick=displayCandlestick(priceHistory,varargin)
     axes_candlestick.user_data=priceHistory;
   end
 
-  if (bWithIchimokuCloud == %t) then
-    hKumo=[hKumo displayIchimokuLines(priceHistory)];
-    hKumo.tag="Kumo";
+  if (isempty(hKumo) == %f) then
+    if (bWithIchimokuCloud == %t) then
+      hKumo=[hKumo displayIchimokuLines(priceHistory)];
+      hKumo.tag="Kumo";
+    end
+    hCandlestick=[hCandlestick hKumo];
   end
-  hCandlestick=[hCandlestick hKumo];
   drawnow();
 endfunction

@@ -14,6 +14,10 @@
 //  along with tasciccac.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+
+// Convert a file where the rows are structure like:
+// 2018-04-14,Open,Max,Min,Close,Volume
+// 
 function priceHistory=convertStrPriceHistory(strPriceHistory)
   [n m]=size(strPriceHistory);
   priceHistory=zeros(n-1,6);
@@ -25,6 +29,9 @@ function priceHistory=convertStrPriceHistory(strPriceHistory)
     Low = msscanf(strPriceHistory(i,4),"%f");
     Close = msscanf(strPriceHistory(i,5),"%f");
     Volume = msscanf(strPriceHistory(i,6),"%f");
+    if (isempty(Volume) == %t) then
+      Volume = 0;
+    end
     priceHistory(n-i+1,:) = [numDate Open High Low Close Volume];
   end
 endfunction

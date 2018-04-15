@@ -28,7 +28,14 @@ strPriceHistory=csvRead("./examples/SP500_m.csv",",",".","string");
 priceHistory=convertStrPriceHistoryN(strPriceHistory);
 
 title("Technical Analysis with Scilab & Ichimoku - $SPX Monthly","fontname","helvetica","fontsize",6);
-hCandlestick=displayCandlestick(priceHistory,%t);
+hCandlestick=displayCandlestick(priceHistory,%f);
+
+// Draw the moving average
+// Pivot is (h+l+c)/3
+pivot=getPivot(priceHistory);
+hMM20=displayMM(pivot(:,2),20,1);
+hMM7=displayMM(priceHistory(:,5),7,0);
+
 
 legend([hCandlestick(5) hCandlestick(6) hCandlestick(4) hCandlestick(2) hCandlestick(3)],[("Tenkan: "+msprintf("%d",round(hCandlestick(5).user_data))) ("Kijun: "+msprintf("%d",round(hCandlestick(6).user_data))) ("Chikou: "+msprintf("%d",round(hCandlestick(4).user_data))) ("SSA: "+msprintf("%d",round(hCandlestick(2).user_data))) ("SSB: "+msprintf("%d",round(hCandlestick(3).user_data)))],2);
 hLegend=gce();

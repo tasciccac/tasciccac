@@ -108,6 +108,10 @@ function hKumo=drawIchimokuCloud(priceHistory,varargin)
   cloud_handles = [];
   
   cloud_startx = ICH_MidPeriod*3;
+  if (size(ichimokuCloud,'r') < cloud_startx) then
+    hKumo = [];
+    return;
+  end
   cloud_starty = (ichimokuCloud(cloud_startx,5)+ichimokuCloud(cloud_startx,6))/2;
   
   cloud_endx = %nan;
@@ -288,12 +292,16 @@ function hKumo=drawIchimokuCloud(priceHistory,varargin)
 endfunction
 
 
-
 function hIchimokuLines=displayIchimokuLines(priceHistory)
   [n m]=size(priceHistory);
   ICH_shortPeriod=9;
   ICH_MidPeriod=26;
   ichimokuCloud=getIchimokuCloud(priceHistory,ICH_shortPeriod,ICH_MidPeriod);
+  
+  if (size(ichimokuCloud,'r') < 3*ICH_MidPeriod) then
+    hIchimokuLines = [];
+    return;
+  end
 
   nbUTTenkanExt = 5;
 
